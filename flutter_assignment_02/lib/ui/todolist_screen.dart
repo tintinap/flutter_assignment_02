@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_assignment_02/model/todo.dart';
 import 'package:flutter_assignment_02/ui/completed_content.dart';
 import 'package:flutter_assignment_02/ui/task_content.dart';
+import 'package:flutter_assignment_02/ui/temp_content.dart';
 
 class TodoListScreen extends StatefulWidget {
   @override
@@ -16,9 +17,8 @@ class TodoListState extends State<TodoListScreen> {
   static List<Todo> completedList = [];
   TodoProvider _todoStorage = TodoProvider();
   int _currentIndex = 0;
-  List<Widget> _content = [Task(), Completed()];
-
-  int _w8_screen = 0;
+  List<Widget> _content = [Task(), Completed(), Temp()];
+  static int temp = 0;
 
 
   @override
@@ -29,20 +29,20 @@ class TodoListState extends State<TodoListScreen> {
           icon: Icon(Icons.add),
           onPressed: (){
             Navigator.pushNamed(context, "/addTask");
+            temp = 0;
             },
           ),
       IconButton(
           icon: Icon(Icons.delete),
           onPressed: () async {
-            _todoStorage.delAllDone();
+            await _todoStorage.delAllDone();
+            temp = 1;
             setState(() {
               completedList = [];
             });
-            _w8_screen = 5;
-            },
-          ),
+          },
+      ),
     ];
-
 
     return Scaffold(
       appBar :AppBar(
@@ -52,7 +52,7 @@ class TodoListState extends State<TodoListScreen> {
         ],
       ),
 
-      body: _w8_screen != 5 ? _content[_currentIndex] : Center(child: Text("No Data Found..")),
+      body: temp != 1 ? _content[_currentIndex] : _content[2],
 
       bottomNavigationBar: Theme(
         data: Theme.of(context).copyWith(
@@ -68,9 +68,9 @@ class TodoListState extends State<TodoListScreen> {
           fixedColor: Colors.blue,
           currentIndex: _currentIndex,
           onTap: (int index) {
+            temp = 0;
             setState(() {
               _currentIndex = index;
-              _w8_screen = 0;
             });
           },
         ),

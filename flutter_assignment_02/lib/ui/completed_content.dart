@@ -39,6 +39,7 @@ class CompletedState extends State<Completed> {
                           item.done = done;
                         });
                         _todoStorage.update(item);
+                        this.loadData();
                       },
                       value: item.done,
                     )
@@ -57,4 +58,18 @@ class CompletedState extends State<Completed> {
       )
     );
   }
+
+    void loadData() {
+      this._todoStorage.getAllTask().then((data) {
+        setState(() {
+          TodoListState.todoList= data;
+        });
+      });
+
+      this._todoStorage.getAllCompleted().then((data) {
+        setState(() {
+          TodoListState.completedList = data;
+        });
+      });
+    }
 }
