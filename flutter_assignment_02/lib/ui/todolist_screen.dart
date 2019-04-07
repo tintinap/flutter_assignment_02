@@ -18,10 +18,12 @@ class TodoListState extends State<TodoListScreen> {
   int _currentIndex = 0;
   List<Widget> _content = [Task(), Completed()];
 
+  int _w8_screen = 0;
+
 
   @override
   Widget build(BuildContext context) {
-
+     _todoStorage.open('todo.db');
      final List icons = <Widget>[
       IconButton(
           icon: Icon(Icons.add),
@@ -32,13 +34,11 @@ class TodoListState extends State<TodoListScreen> {
       IconButton(
           icon: Icon(Icons.delete),
           onPressed: () async {
-            for(var item in completedList){
-              print(item.id);
-              await _todoStorage.delete(item.id);
-            }
+            _todoStorage.delAllDone();
             setState(() {
               completedList = [];
             });
+            _w8_screen = 5;
             },
           ),
     ];
@@ -52,7 +52,7 @@ class TodoListState extends State<TodoListScreen> {
         ],
       ),
 
-      body: _content[_currentIndex],
+      body: _w8_screen != 5 ? _content[_currentIndex] : Center(child: Text("No Data Found..")),
 
       bottomNavigationBar: Theme(
         data: Theme.of(context).copyWith(
@@ -70,6 +70,7 @@ class TodoListState extends State<TodoListScreen> {
           onTap: (int index) {
             setState(() {
               _currentIndex = index;
+              _w8_screen = 0;
             });
           },
         ),

@@ -121,5 +121,12 @@ class TodoProvider {
     return data.map((d) => Todo.formMap(d)).toList();
   }
 
+    Future delAllDone() async{
+    await this._db.delete(
+      tableToDo,
+      where: '$columnDone = 1',
+    );
+  }
+
   Future close() async => _db.close();
 }
