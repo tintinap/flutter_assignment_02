@@ -10,7 +10,7 @@ class Todo {
   String _title;
   bool _done;
 
-  ToDo({String title}) {
+  Todo({String title}) {
     this._title = title;
     this._done = false;
   }
@@ -67,7 +67,14 @@ class TodoProvider {
     });
   }
 
-    Future<Todo> getTodo(int id) async {
+  Future<Todo> insert(Todo todo) async {
+    todo.id = await _db.insert(
+      tableToDo, 
+      todo.toMap());
+    return todo;
+  }
+
+  Future<Todo> getTodo(int id) async {
     List<Map> maps = await _db.query(
       tableToDo,
       columns: [columnID, columnDone, columnTitle],
@@ -81,13 +88,37 @@ class TodoProvider {
   }
   
   Future<int> delete(int id) async{
-    return await _db.delete(tableToDo, where: '$columnID = ?', whereArgs: [id]);
+    return await _db.delete(
+      tableToDo, where: '$columnID = ?', 
+      whereArgs: [id]);
   }
 
   Future<int> update(Todo todo) async{
-    return await _db.update(tableToDo, todo.toMap(),
-    where: '$columnID = ?', whereArgs: [todo.id]
+    return await _db.update(
+      tableToDo, todo.toMap(),
+      where: '$columnID = ?',
+      whereArgs: [todo.id],
     );
+  }
+
+  Future<List<Todo>> getAllTask() async {
+    await this.open("todo.db");
+    List<Map<String, dynamic>> data = await _db.query(
+      tableToDo,
+      where: '$columnDone = 0'
+    );
+
+    return data.map((d) => Todo.formMap(d)).toList();
+  }
+
+  Future<List<Todo>> getAllCompleted() async {
+    await this.open("todo.db");
+    List<Map<String, dynamic>> data = await _db.query(
+      tableToDo,
+      where: '$columnDone = 1'
+    );
+
+    return data.map((d) => Todo.formMap(d)).toList();
   }
 
   Future close() async => _db.close();

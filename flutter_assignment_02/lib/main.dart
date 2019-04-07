@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import './gui/todolist_screen.dart';
+import './ui/todolist_screen.dart';
+import './ui/add_task_screen.dart';
 
 
 void main() => runApp(TodoApp());
@@ -17,6 +18,7 @@ class TodoApp extends StatelessWidget {
       initialRoute: "/",
       routes : {
         "/" : (context) => TodoListScreen(),
+        "/addTask" : (context) => AddTaskScreen(),
       }
     );
   }
